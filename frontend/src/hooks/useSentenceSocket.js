@@ -1,23 +1,27 @@
-import { useState, useEffect } from "react";
-import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+// src/hooks/useSentenceSocket.js
+import { Client } from '@stomp/stompjs';
+
+import { useState, useEffect } from 'react';
 
 export default function useSentenceSocket() {
-  const [sentence, setSentence] = useState(null);
+  const [sentence, setSentence] = useState("Welcome to LingDingDong! 🌐");
 
   useEffect(() => {
-    const socket = new SockJS("http://localhost:8080/ws");
-    const stompClient = Stomp.over(socket);
-
-    stompClient.connect({}, () => {
-      console.log("✅ Connected to WebSocket");
-      stompClient.subscribe("/topic/sentence", (message) => {
-        console.log("📩 New sentence:", message.body);
-        setSentence(message.body);
-      });
+    const client = new Client({
+      brokerURL: 'ws://localhost:8080/ws', // your Spring Boot STOMP endpoint
+      reconnectDelay: 5000, // auto-reconnect
     });
 
-    return () => stompClient.disconnect();
+    client.onConnect = () => {
+      console.log('✅ Connected to WebSocket');
+      client.subscribe('/topic/sentence', (message) => {
+        setSentence(message.body);
+      });
+    };
+
+    client.activate(); // connect
+
+    return () => client.deactivate();
   }, []);
 
   return sentence;

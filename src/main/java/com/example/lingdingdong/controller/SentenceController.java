@@ -12,7 +12,7 @@ public class SentenceController {
     private final SimpMessagingTemplate template;
     private final SentenceService sentenceService;
 
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 6000)
     public void sendSentence(){
         String sentence = sentenceService.getCurrentSentence();
         template.convertAndSend("/topic/sentence", sentence);

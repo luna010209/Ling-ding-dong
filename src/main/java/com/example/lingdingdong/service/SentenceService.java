@@ -27,7 +27,7 @@ public class SentenceService {
         updateSentence();
     }
 
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 6000)
     public void updateSentence(){
         currentSentence = sentences.get(random.nextInt(sentences.size()));
         System.out.println("New selected sentence: " + currentSentence);

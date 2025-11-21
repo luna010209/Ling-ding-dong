@@ -7,10 +7,14 @@ import {
   IconButton,
   Button,
   Stack,
+  Select,
+  MenuItem,
+  TextField,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import InfoIcon from "@mui/icons-material/Info";
+import { changeLanguage } from "../hooks/useSentence";
 
 const LANG_MAP = {
   ko: "ko-KR",
@@ -19,9 +23,8 @@ const LANG_MAP = {
   ja: "ja-JP",
 };
 
-export default function LingPopup({ sentence }) {
+export default function LingPopup({ sentence, language, setLanguage }) {
   const [open, setOpen] = useState(false);
-  const [language, setLanguage] = useState("en");
 
   useEffect(() => {
     if (sentence) {
@@ -34,7 +37,7 @@ export default function LingPopup({ sentence }) {
   const handleClose = () => setOpen(false);
   const handleSpeak = () => {
     const utter = new SpeechSynthesisUtterance(sentence);
-    const fullLangCode = LANG_MAP[language]; // map to full code
+    const fullLangCode = LANG_MAP[language]; 
     const voices = speechSynthesis.getVoices();
     const voice = voices.find((v) => v.lang.startsWith(fullLangCode));
 
@@ -47,6 +50,15 @@ export default function LingPopup({ sentence }) {
     speechSynthesis.speak(utter);
   };
 
+  const handleLanguageChange = async (lang) => {
+    setLanguage(lang);
+    try {
+      await changeLanguage(lang);
+      console.log("Language changed:", lang);
+    } catch (error) {
+      console.error("Failed to change language:", error);
+    }
+  };
 
   if (!sentence) return null;
 
@@ -81,7 +93,7 @@ export default function LingPopup({ sentence }) {
             {sentence}
           </Typography>
 
-          <Stack direction="row" justifyContent="space-between">
+          <Stack direction="row" justifyContent="space-between" gap={1}>
             <IconButton color="primary" onClick={handleSpeak}>
               <VolumeUpIcon />
             </IconButton>
@@ -97,9 +109,10 @@ export default function LingPopup({ sentence }) {
 
             <Select
               value={language}
-              onChange={(e) => setLanguage(e.target.value)}
+              onChange={(e) => handleLanguageChange(e.target.value)}
               size="small"
               sx={{ minWidth: 120 }}
+              MenuProps={{ disablePortal: true }}
             >
               <MenuItem value="en">English</MenuItem>
               <MenuItem value="ko">Korean</MenuItem>
@@ -108,7 +121,7 @@ export default function LingPopup({ sentence }) {
             </Select>
 
             <Button onClick={handleClose} color="error" variant="outlined">
-              <CloseIcon />
+              <CloseIcon size="small"/>
             </Button>
           </Stack>
         </CardContent>

@@ -1,9 +1,10 @@
 // src/hooks/useSentenceSocket.js
 import { Client } from '@stomp/stompjs';
+import axios from 'axios';
 
 import { useState, useEffect } from 'react';
 
-export default function useSentenceSocket() {
+export default function useSentence() {
   const [sentence, setSentence] = useState("Welcome to LingDingDong! 🌐");
 
   useEffect(() => {
@@ -26,3 +27,23 @@ export default function useSentenceSocket() {
 
   return sentence;
 }
+
+export const changeLanguage = async (lang) => {
+  try {
+    await axios.post("/api/language", null, {
+      params: { language: lang },   // MUST match backend
+    });
+  } catch (error) {
+    console.error("Failed to update language", error);
+  }
+};
+
+export const getLanguageSentence = async () => {
+  try {
+    const res = await axios.get("/api/language");
+    return res.data; 
+  } catch (error) {
+    console.error("Failed to update language", error);
+  }
+};
+

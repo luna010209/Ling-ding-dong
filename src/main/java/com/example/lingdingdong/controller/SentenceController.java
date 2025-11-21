@@ -14,6 +14,7 @@ public class SentenceController {
 
     @Scheduled(fixedRate = 6000)
     public void sendSentence(){
+        sentenceService.updateSentence();
         String sentence = sentenceService.getCurrentSentence();
         template.convertAndSend("/topic/sentence", sentence);
         System.out.println("Sent sentence: "+ sentence);

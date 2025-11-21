@@ -50,34 +50,32 @@ public class SentenceService {
 
     private final Random random = new Random();
 
-    private volatile String currentLanguage = "en"; // default
+    @Getter
+    private volatile LanguageCode currentLanguage = LanguageCode.EN;
 
     @Getter
     @Setter
     private volatile String currentSentence;
 
-    @PostConstruct
-    public void init(){
-        updateSentence();
-    }
-
-    @Scheduled(fixedRate = 600000) // every 10 minutes
-    public void scheduleSentence() {
-        updateSentence();
-    }
-
     public void updateSentence() {
         List<String> list = sentencesByLang.getOrDefault(currentLanguage, List.of());
+        String oldSentence = currentSentence;
         if (!list.isEmpty()) {
             currentSentence = list.get(random.nextInt(list.size()));
+            while (currentSentence.equals(oldSentence)){
+                currentSentence = list.get(random.nextInt(list.size()));
+            }
             System.out.println("New sentence (" + currentLanguage + "): " + currentSentence);
         }
     }
 
     public void setCurrentLanguage(String lang) {
-        if (sentencesByLang.containsKey(lang)) {
-            this.currentLanguage = lang;
+        try {
+            LanguageCode code = LanguageCode.valueOf(lang.toUpperCase());
+            this.currentLanguage = code;
             updateSentence();
+        } catch (Exception e) {
+            System.out.println("Invalid language: " + lang);
         }
     }
 }

@@ -2,10 +2,9 @@ package com.example.lingdingdong.controller;
 
 import com.example.lingdingdong.service.SentenceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,5 +14,13 @@ public class LanguageController {
     @PostMapping
     public void changeLanguage(@RequestParam String language){
         sentenceService.setCurrentLanguage(language);
+    }
+
+    @GetMapping
+    public Map<String, String> getCurrentSentence(){
+        return Map.of(
+            "language", sentenceService.getCurrentLanguage().toString(),
+            "sentence", sentenceService.getCurrentSentence()
+        );
     }
 }

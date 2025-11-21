@@ -1,36 +1,83 @@
 package com.example.lingdingdong.service;
 
+import com.example.lingdingdong.entity.LanguageCode;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Service
 public class SentenceService {
-    private final List<String> sentences = List.of(
-            "오늘 날씨가 정말 좋네요!",           // The weather is really nice today!
-            "I’m learning Korean every day!",
-            "한국 음식은 너무 맛있어요.",           // Korean food is so delicious.
-            "Practice makes perfect!",
-            "Don’t give up — keep studying!"
+    private final Map<LanguageCode, List<String>> sentencesByLang = Map.of(
+            LanguageCode.EN, List.of(
+                    "I'm learning English everyday",
+                    "Don't give up!",
+                    "Could you pass me a glass of water?",
+                    "Would you like a piece of cake?",
+                    "What time do you usually get up?",
+                    "You should practice English everyday"
+            ),
+            LanguageCode.KO, List.of(
+                    "매일 한국어를 배우고 있어요",
+                    "포기하지 마세요!",
+                    "물을 건네주실래요?",
+                    "케이크를 한 조각 드실래요?",
+                    "몇 시에 일어나세요?",
+                    "매일 한국어를 연습해야 해요"
+            ),
+            LanguageCode.VI, List.of(
+                    "Tôi học tiếng Việt mỗi ngày",
+                    "Đừng bỏ cuộc!",
+                    "Bạn có thể đưa cho tôi cốc nước không?",
+                    "Bạn có muốn một miếng bánh không?",
+                    "Bạn thường thức dậy vào mấy giờ?",
+                    "Bạn nên luyện tập tiếng Việt mỗi ngày"
+            ),
+            LanguageCode.JA, List.of(
+                    "私は毎日日本語を勉強しています",
+                    "諦めないでください!",
+                    "水を渡してくれますか？",
+                    "ケーキを一切れいかがですか？",
+                    "何時に起きますか？",
+                    "毎日日本語を練習すべきです"
+            )
     );
 
-    @Getter
-    private String currentSentence;
     private final Random random = new Random();
+
+    private volatile String currentLanguage = "en"; // default
+
+    @Getter
+    @Setter
+    private volatile String currentSentence;
 
     @PostConstruct
     public void init(){
         updateSentence();
     }
 
-    @Scheduled(fixedRate = 6000)
-    public void updateSentence(){
-        currentSentence = sentences.get(random.nextInt(sentences.size()));
-        System.out.println("New selected sentence: " + currentSentence);
+    @Scheduled(fixedRate = 600000) // every 10 minutes
+    public void scheduleSentence() {
+        updateSentence();
     }
 
+    public void updateSentence() {
+        List<String> list = sentencesByLang.getOrDefault(currentLanguage, List.of());
+        if (!list.isEmpty()) {
+            currentSentence = list.get(random.nextInt(list.size()));
+            System.out.println("New sentence (" + currentLanguage + "): " + currentSentence);
+        }
+    }
+
+    public void setCurrentLanguage(String lang) {
+        if (sentencesByLang.containsKey(lang)) {
+            this.currentLanguage = lang;
+            updateSentence();
+        }
+    }
 }

@@ -12,20 +12,41 @@ import CloseIcon from "@mui/icons-material/Close";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import InfoIcon from "@mui/icons-material/Info";
 
+const LANG_MAP = {
+  ko: "ko-KR",
+  en: "en-US",
+  vi: "vi-VN",
+  ja: "ja-JP",
+};
+
 export default function LingPopup({ sentence }) {
   const [open, setOpen] = useState(false);
+  const [language, setLanguage] = useState("en");
 
   useEffect(() => {
     if (sentence) {
       setOpen(true);
-      const timer = setTimeout(() => setOpen(false), 15000); // Auto-close after 15 sec
+      const timer = setTimeout(() => setOpen(false), 60000); // Auto-close after 15 sec
       return () => clearTimeout(timer);
     }
   }, [sentence]);
 
   const handleClose = () => setOpen(false);
-  const handleSpeak = () =>
-    speechSynthesis.speak(new SpeechSynthesisUtterance(sentence));
+  const handleSpeak = () => {
+    const utter = new SpeechSynthesisUtterance(sentence);
+    const fullLangCode = LANG_MAP[language]; // map to full code
+    const voices = speechSynthesis.getVoices();
+    const voice = voices.find((v) => v.lang.startsWith(fullLangCode));
+
+    if (voice) {
+      utter.voice = voice;
+    } else {
+      console.warn("No matching voice found for", fullLangCode);
+    }
+
+    speechSynthesis.speak(utter);
+  };
+
 
   if (!sentence) return null;
 
@@ -73,6 +94,18 @@ export default function LingPopup({ sentence }) {
             >
               <InfoIcon />
             </IconButton>
+
+            <Select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              size="small"
+              sx={{ minWidth: 120 }}
+            >
+              <MenuItem value="en">English</MenuItem>
+              <MenuItem value="ko">Korean</MenuItem>
+              <MenuItem value="vi">Vietnamese</MenuItem>
+              <MenuItem value="ja">Japanese</MenuItem>
+            </Select>
 
             <Button onClick={handleClose} color="error" variant="outlined">
               <CloseIcon />

@@ -12,7 +12,7 @@ public class SentenceController {
     private final SimpMessagingTemplate template;
     private final SentenceService sentenceService;
 
-    @Scheduled(fixedRate = 6000)
+    @Scheduled(fixedRate = 60000)
     public void sendSentence(){
         sentenceService.updateSentence();
         String sentence = sentenceService.getCurrentSentence();

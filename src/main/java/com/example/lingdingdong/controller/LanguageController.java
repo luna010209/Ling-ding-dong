@@ -12,8 +12,9 @@ import java.util.Map;
 public class LanguageController {
     private final SentenceService sentenceService;
     @PostMapping
-    public void changeLanguage(@RequestParam String language){
+    public String changeLanguage(@RequestParam String language){
         sentenceService.setCurrentLanguage(language);
+        return sentenceService.getCurrentSentence();
     }
 
     @GetMapping

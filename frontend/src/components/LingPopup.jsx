@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Snackbar,
   Card,
@@ -10,11 +10,12 @@ import {
   Select,
   MenuItem,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import InfoIcon from "@mui/icons-material/Info";
-import { changeLanguage } from "../hooks/useSentence";
+import sentenceSocket, { changeLanguage, getLanguageSentence } from "../hooks/useSentence";
 
 const LANG_MAP = {
   ko: "ko-KR",
@@ -23,40 +24,91 @@ const LANG_MAP = {
   ja: "ja-JP",
 };
 
-export default function LingPopup({ sentence, language, setLanguage }) {
+export default function LingPopup() {
   const [open, setOpen] = useState(false);
+  const [language, setLanguage] = useState("en");
+  const [sentence, setSentence] = useState("Welcome to LingDingDong! 🌐");
+  const [isLoading, setIsLoading] = useState(false);
 
+  // useEffect(() => {
+  //   // Ask for browser notification permission ONCE
+  //   if (Notification.permission === "default") {
+  //     Notification.requestPermission();
+  //   }
+  // }, []);
+
+  // Fetch current language from backend when component mounts
+  useEffect(() => {
+    const disconnect = sentenceSocket(setSentence);
+
+    const fetchLanguage = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getLanguageSentence(); // Make sure this returns { language, sentence }
+        if (data) {
+          setLanguage(data.language.toLowerCase());
+          setSentence(data.sentence);
+        }
+      } catch (err) {
+        console.error("Failed to get language", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLanguage();
+
+    return () => disconnect?.();
+  }, []);
+
+  // Open popup whenever sentence changes
   useEffect(() => {
     if (sentence) {
       setOpen(true);
-      const timer = setTimeout(() => setOpen(false), 60000); // Auto-close after 15 sec
+      // --- Desktop Notification ---
+      // if (Notification.permission === "granted") {
+      //   new Notification("LingDingDong", {
+      //     body: sentence,
+      //     icon: "/icon.png",
+      //   });
+      // } else if (Notification.permission === "default") {
+      //   Notification.requestPermission().then((permission) => {
+      //     if (permission === "granted") {
+      //       new Notification("LingDingDong", {
+      //         body: sentence,
+      //         icon: "/icon.png",
+      //       });
+      //     }
+      //   });
+      // }
+
+      const timer = setTimeout(() => setOpen(false), 60000); // auto-close
       return () => clearTimeout(timer);
     }
   }, [sentence]);
 
   const handleClose = () => setOpen(false);
   const handleSpeak = () => {
+    if (!sentence) return;
     const utter = new SpeechSynthesisUtterance(sentence);
-    const fullLangCode = LANG_MAP[language]; 
+    const fullLangCode = LANG_MAP[language];
     const voices = speechSynthesis.getVoices();
     const voice = voices.find((v) => v.lang.startsWith(fullLangCode));
-
-    if (voice) {
-      utter.voice = voice;
-    } else {
-      console.warn("No matching voice found for", fullLangCode);
-    }
-
+    if (voice) utter.voice = voice;
     speechSynthesis.speak(utter);
   };
 
   const handleLanguageChange = async (lang) => {
     setLanguage(lang);
+    setIsLoading(true);
     try {
-      await changeLanguage(lang);
-      console.log("Language changed:", lang);
-    } catch (error) {
-      console.error("Failed to change language:", error);
+      const sentence = await changeLanguage(lang); // Call backend to update language
+      setSentence(sentence);
+      console.log("New sentence:", sentence);
+    } catch (err) {
+      console.error("Failed to change language", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -89,9 +141,15 @@ export default function LingPopup({ sentence, language, setLanguage }) {
             LingDingDong 💬
           </Typography>
 
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            {sentence}
-          </Typography>
+          {isLoading ? (
+            <Stack justifyContent="center" alignItems="center" sx={{ my: 2 }}>
+              <CircularProgress size={24} /> {/* loading spinner */}
+            </Stack>
+          ) : (
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              {sentence}
+            </Typography>
+          )}
 
           <Stack direction="row" justifyContent="space-between" gap={1}>
             <IconButton color="primary" onClick={handleSpeak}>
@@ -121,7 +179,7 @@ export default function LingPopup({ sentence, language, setLanguage }) {
             </Select>
 
             <Button onClick={handleClose} color="error" variant="outlined">
-              <CloseIcon size="small"/>
+              <CloseIcon size="small" />
             </Button>
           </Stack>
         </CardContent>

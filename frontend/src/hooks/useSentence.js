@@ -2,37 +2,30 @@
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 
-import { useState, useEffect } from 'react';
+export default function sentenceSocket(setSentence) {
+  const client = new Client({
+    brokerURL: 'ws://localhost:8080/ws', // your Spring Boot STOMP endpoint
+    reconnectDelay: 5000, // auto-reconnect
+  });
 
-export default function useSentence() {
-  const [sentence, setSentence] = useState("Welcome to LingDingDong! 🌐");
-
-  useEffect(() => {
-    const client = new Client({
-      brokerURL: 'ws://localhost:8080/ws', // your Spring Boot STOMP endpoint
-      reconnectDelay: 5000, // auto-reconnect
+  client.onConnect = () => {
+    console.log('✅ Connected to WebSocket');
+    client.subscribe('/topic/sentence', (message) => {
+      setSentence(message.body);
     });
+  };
 
-    client.onConnect = () => {
-      console.log('✅ Connected to WebSocket');
-      client.subscribe('/topic/sentence', (message) => {
-        setSentence(message.body);
-      });
-    };
+  client.activate(); // connect
 
-    client.activate(); // connect
-
-    return () => client.deactivate();
-  }, []);
-
-  return sentence;
-}
+  return () => client.deactivate();
+};
 
 export const changeLanguage = async (lang) => {
   try {
-    await axios.post("/api/language", null, {
+    const res = await axios.post("/api/language", null, {
       params: { language: lang },   // MUST match backend
     });
+    return res.data;
   } catch (error) {
     console.error("Failed to update language", error);
   }
@@ -41,7 +34,7 @@ export const changeLanguage = async (lang) => {
 export const getLanguageSentence = async () => {
   try {
     const res = await axios.get("/api/language");
-    return res.data; 
+    return res.data;
   } catch (error) {
     console.error("Failed to update language", error);
   }

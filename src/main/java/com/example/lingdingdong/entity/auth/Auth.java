@@ -1,9 +1,13 @@
 package com.example.lingdingdong.entity.auth;
 
+import com.example.lingdingdong.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -23,4 +27,8 @@ public class Auth {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "role")
+    @Builder.Default
+    private Set<Role> roles = new HashSet<>();
 }

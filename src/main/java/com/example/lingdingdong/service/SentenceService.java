@@ -1,10 +1,8 @@
 package com.example.lingdingdong.service;
 
-import com.example.lingdingdong.entity.LanguageCode;
-import jakarta.annotation.PostConstruct;
+import com.example.lingdingdong.enums.LanguageCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

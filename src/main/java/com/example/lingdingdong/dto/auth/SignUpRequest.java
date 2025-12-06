@@ -1,5 +1,6 @@
 package com.example.lingdingdong.dto.auth;
 
+import com.example.lingdingdong.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 
 public record SignUpRequest(
@@ -13,6 +14,8 @@ public record SignUpRequest(
         String password,
 
         @NotBlank(message = "Please confirm your password")
-        String cfPassword
+        String cfPassword,
+
+        Role role
 ) {
 }

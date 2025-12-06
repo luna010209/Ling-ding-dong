@@ -6,12 +6,16 @@ import com.example.lingdingdong.exception.CustomException;
 import com.example.lingdingdong.repo.AuthRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService{
     private final AuthRepo authRepo;
+    private final PasswordEncoder encoder;
 
     @Override
     public Long newUser(SignUpRequest request) {
@@ -25,7 +29,11 @@ public class AuthServiceImpl implements AuthService{
         Auth user = Auth.builder()
                 .username(request.username())
                 .email(request.email())
+                .password(encoder.encode(request.password()))
+                .roles(Set.of(request.role()))
                 .build();
-        return 0L;
+
+        authRepo.save(user);
+        return user.getId();
     }
 }

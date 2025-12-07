@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record LoginRequest(
         @NotBlank(message = "Please input your email or phone")
-        String emailOrPhone,
+        String email,
 
         @NotBlank(message = "Please input your password")
         String password

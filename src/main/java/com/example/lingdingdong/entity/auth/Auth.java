@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,6 +29,9 @@ public class Auth {
 
     @Column(name = "email")
     private String email;
+
+    @Setter
+    private LocalDateTime lastLogin;
 
     @Column(name = "role")
     @Builder.Default

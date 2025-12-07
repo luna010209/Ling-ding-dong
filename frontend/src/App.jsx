@@ -3,7 +3,7 @@ import LingPopup from "./components/LingPopup";
 import { Button, Container, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 
 function App() {
-  // const sentence = useSentence(setIsLoading); // custom hook listens to WebSocket
+  // const mySentence = useSentence(setIsLoading); // custom hook listens to WebSocket
 
   return (
     <Container sx={{ mt: 5 }}>
@@ -11,7 +11,7 @@ function App() {
         🌐 LingDingDong System
       </Typography>
       <Typography textAlign="center" color="text.secondary" sx={{ mb: 3 }}>
-        Waiting for next sentence popup every 10 minutes...
+        Waiting for next mySentence popup every 10 minutes...
       </Typography>
 
       <LingPopup />

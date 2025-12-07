@@ -1,4 +1,4 @@
-package com.example.lingdingdong.controller;
+package com.example.lingdingdong.controller.sentence;
 
 import com.example.lingdingdong.service.sentence.SentenceService;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-public class SentenceController {
+public class SentenceSocketController {
     private final SimpMessagingTemplate template;
     private final SentenceService sentenceService;
 

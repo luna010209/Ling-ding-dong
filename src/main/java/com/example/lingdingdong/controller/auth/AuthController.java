@@ -1,4 +1,4 @@
-package com.example.lingdingdong.controller;
+package com.example.lingdingdong.controller.auth;
 
 import com.example.lingdingdong.dto.auth.LoginRequest;
 import com.example.lingdingdong.dto.auth.LoginResponse;

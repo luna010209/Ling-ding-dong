@@ -1,4 +1,6 @@
 package com.example.lingdingdong.dto.sentence;
 
-public record SentenceRequest() {
+public record SentenceRequest(
+        String lang
+) {
 }

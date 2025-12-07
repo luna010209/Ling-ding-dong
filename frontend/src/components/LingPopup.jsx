@@ -27,7 +27,7 @@ const LANG_MAP = {
 export default function LingPopup() {
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState("en");
-  const [sentence, setSentence] = useState("Welcome to LingDingDong! 🌐");
+  const [mySentence, setSentence] = useState("Welcome to LingDingDong! 🌐");
   const [isLoading, setIsLoading] = useState(false);
 
   // useEffect(() => {
@@ -44,10 +44,10 @@ export default function LingPopup() {
     const fetchLanguage = async () => {
       setIsLoading(true);
       try {
-        const data = await getLanguageSentence(); // Make sure this returns { language, sentence }
+        const data = await getLanguageSentence(); // Make sure this returns { language, mySentence }
         if (data) {
           setLanguage(data.language.toLowerCase());
-          setSentence(data.sentence);
+          setSentence(data.mySentence);
         }
       } catch (err) {
         console.error("Failed to get language", err);
@@ -61,21 +61,21 @@ export default function LingPopup() {
     return () => disconnect?.();
   }, []);
 
-  // Open popup whenever sentence changes
+  // Open popup whenever mySentence changes
   useEffect(() => {
-    if (sentence) {
+    if (mySentence) {
       setOpen(true);
       // --- Desktop Notification ---
       // if (Notification.permission === "granted") {
       //   new Notification("LingDingDong", {
-      //     body: sentence,
+      //     body: mySentence,
       //     icon: "/icon.png",
       //   });
       // } else if (Notification.permission === "default") {
       //   Notification.requestPermission().then((permission) => {
       //     if (permission === "granted") {
       //       new Notification("LingDingDong", {
-      //         body: sentence,
+      //         body: mySentence,
       //         icon: "/icon.png",
       //       });
       //     }
@@ -85,12 +85,12 @@ export default function LingPopup() {
       const timer = setTimeout(() => setOpen(false), 60000); // auto-close
       return () => clearTimeout(timer);
     }
-  }, [sentence]);
+  }, [mySentence]);
 
   const handleClose = () => setOpen(false);
   const handleSpeak = () => {
-    if (!sentence) return;
-    const utter = new SpeechSynthesisUtterance(sentence);
+    if (!mySentence) return;
+    const utter = new SpeechSynthesisUtterance(mySentence);
     const fullLangCode = LANG_MAP[language];
     const voices = speechSynthesis.getVoices();
     const voice = voices.find((v) => v.lang.startsWith(fullLangCode));
@@ -102,9 +102,9 @@ export default function LingPopup() {
     setLanguage(lang);
     setIsLoading(true);
     try {
-      const sentence = await changeLanguage(lang); // Call backend to update language
-      setSentence(sentence);
-      console.log("New sentence:", sentence);
+      const mySentence = await changeLanguage(lang); // Call backend to update language
+      setSentence(mySentence);
+      console.log("New mySentence:", mySentence);
     } catch (err) {
       console.error("Failed to change language", err);
     } finally {
@@ -112,7 +112,7 @@ export default function LingPopup() {
     }
   };
 
-  if (!sentence) return null;
+  if (!mySentence) return null;
 
   return (
     <Snackbar
@@ -147,7 +147,7 @@ export default function LingPopup() {
             </Stack>
           ) : (
             <Typography variant="body1" sx={{ mb: 2 }}>
-              {sentence}
+              {mySentence}
             </Typography>
           )}
 

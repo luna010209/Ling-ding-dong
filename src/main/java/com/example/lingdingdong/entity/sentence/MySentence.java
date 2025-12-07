@@ -12,7 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 @Table(name = "ldd_sentence")
-public class Sentence {
+public class MySentence {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

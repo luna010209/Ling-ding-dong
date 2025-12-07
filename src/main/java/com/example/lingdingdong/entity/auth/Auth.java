@@ -1,14 +1,12 @@
 package com.example.lingdingdong.entity.auth;
 
-import com.example.lingdingdong.entity.sentence.Sentence;
+import com.example.lingdingdong.entity.sentence.MySentence;
 import com.example.lingdingdong.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -39,5 +37,5 @@ public class Auth {
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final Set<Sentence> sentences = new HashSet<>();
+    private final Set<MySentence> mySentences = new HashSet<>();
 }

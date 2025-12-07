@@ -1,15 +1,14 @@
-package com.example.lingdingdong.controller;
+package com.example.lingdingdong.controller.sentence;
 
+import com.example.lingdingdong.dto.sentence.SentenceResponse;
 import com.example.lingdingdong.service.sentence.SentenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/language")
-public class LanguageController {
+@RequestMapping("/api/sentence")
+public class SentenceController {
     private final SentenceService sentenceService;
     @PostMapping
     public String changeLanguage(@RequestParam String language){
@@ -18,10 +17,10 @@ public class LanguageController {
     }
 
     @GetMapping
-    public Map<String, String> getCurrentSentence(){
-        return Map.of(
-            "language", sentenceService.getCurrentLanguage().toString(),
-            "sentence", sentenceService.getCurrentSentence()
+    public SentenceResponse getCurrentSentence(){
+        return new SentenceResponse(
+                sentenceService.getCurrentLanguage().name(),
+                sentenceService.getCurrentSentence()
         );
     }
 }

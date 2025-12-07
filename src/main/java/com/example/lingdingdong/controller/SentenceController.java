@@ -1,6 +1,6 @@
 package com.example.lingdingdong.controller;
 
-import com.example.lingdingdong.service.SentenceService;
+import com.example.lingdingdong.service.sentence.SentenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;

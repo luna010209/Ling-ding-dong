@@ -1,4 +1,4 @@
-package com.example.lingdingdong.service;
+package com.example.lingdingdong.service.sentence;
 
 import com.example.lingdingdong.enums.LanguageCode;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Service
-public class SentenceService {
+public class SentenceServiceImpl implements SentenceService {
     private final Map<LanguageCode, List<String>> sentencesByLang = Map.of(
             LanguageCode.EN, List.of(
                     "I'm learning English everyday",
@@ -63,17 +63,13 @@ public class SentenceService {
             while (currentSentence.equals(oldSentence)){
                 currentSentence = list.get(random.nextInt(list.size()));
             }
-            System.out.println("New sentence (" + currentLanguage + "): " + currentSentence);
+//            System.out.println("New sentence (" + currentLanguage + "): " + currentSentence);
         }
     }
 
     public void setCurrentLanguage(String lang) {
-        try {
-            LanguageCode code = LanguageCode.valueOf(lang.toUpperCase());
-            this.currentLanguage = code;
-            updateSentence();
-        } catch (Exception e) {
-            System.out.println("Invalid language: " + lang);
-        }
+        LanguageCode code = LanguageCode.valueOf(lang.toUpperCase());
+        this.currentLanguage = code;
+        updateSentence();
     }
 }

@@ -17,6 +17,8 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
     private TokenProvider tokenProvider;
+    public static final String TOKEN_EXPIRED_HEADER = "X-Token-Expired";
+
     public JwtFilter(TokenProvider tokenProvider){this.tokenProvider=tokenProvider;}
 
     @Override

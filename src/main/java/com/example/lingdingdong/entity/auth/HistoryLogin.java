@@ -24,6 +24,7 @@ public class HistoryLogin {
 
     private String userAgent;
 
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     protected void onCreate(){
